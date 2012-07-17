@@ -1,22 +1,7 @@
-#' Display a smooth density estimate.
-#'
-#' A smooth density estimate calculated by \code{\link{stat_density}}.
-#'
-#' @seealso \code{\link{geom_histogram}} for the histogram
-#' @inheritParams geom_point
-#' @export
-#' @examples
-#' # See stat_density for examples
-geom_density <- function (mapping = NULL, data = NULL, stat = "density", position = "identity", 
-na.rm = FALSE, ...) {
-  GeomDensity$new(mapping = mapping, data = data, stat = stat, position = position, 
-  na.rm = na.rm, ...)
-}
-
 GeomDensity <- proto(GeomArea, {
   objname <- "density"
-
-  objname <- "density"
+  desc <- "Display a smooth density estimate"
+  details <- "A smooth density estimate calculated by stat_density"
   icon <- function(.) {
     x <- seq(0, 1, length=80)
     y <- dnorm(x, mean=0.5, sd=0.15)
@@ -25,5 +10,13 @@ GeomDensity <- proto(GeomArea, {
   default_stat <- function(.) StatDensity
   default_pos <- function(.) PositionIdentity
   
-  default_aes <- function(.) defaults(aes(fill=NA, weight=1, colour="black", alpha = NA), GeomArea$default_aes())
+  seealso <- list(
+    geom_histogram = "for the histogram"
+  )  
+
+  default_aes <- function(.) defaults(aes(fill=NA, weight=1, colour="black", alpha = 1), GeomArea$default_aes())
+
+  examples <- function(.) {
+    # See stat_density for examples
+  }
 })

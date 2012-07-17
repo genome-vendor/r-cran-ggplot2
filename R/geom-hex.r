@@ -1,27 +1,22 @@
-#' Hexagon bining.
-#'
-#' @export
-#' @inheritParams geom_point
-#' @examples
-#' # See ?stat_binhex for examples  
-geom_hex <- function (mapping = NULL, data = NULL, stat = "binhex", position = "identity", ...) { 
-  GeomHex$new(mapping = mapping, data = data, stat = stat, position = position, ...)
-}
-
 GeomHex <- proto(Geom, {
   objname <- "hex"
+  desc <- "Tile the plane with hexagons"
 
   draw <- function(., data, scales, coordinates, ...) { 
-    with(coord_transform(coordinates, data, scales), 
+    with(coordinates$transform(data, scales), 
       ggname(.$my_name(), hexGrob(x, y, col=colour, 
         fill = alpha(fill, alpha)))
     )
   }
   
   required_aes <- c("x", "y")
-  default_aes <- function(.) aes(colour=NA, fill = "grey50", size=0.5, alpha = NA)
+  default_aes <- function(.) aes(colour=NA, fill = "grey50", size=0.5, alpha = 1)
   default_stat <- function(.) StatBinhex
   guide_geom <- function(.) "polygon"
+  
+  examples <- function() {
+    # See ?stat_binhex for examples  
+  }
   
 })
 
@@ -29,11 +24,11 @@ GeomHex <- proto(Geom, {
 # Draw hexagon grob
 # Modified from code by Nicholas Lewin-Koh and Martin Maechler
 # 
-# @param x positions of hex centres
-# @param y positions
-# @param vector of hex sizes
-# @param border colour
-# @param fill colour
+# @arguments x positions of hex centres
+# @arguments y positions
+# @arguments vector of hex sizes
+# @arguments border colour
+# @arguments fill colour
 # @keyword internal
 hexGrob <- function(x, y, size = rep(1, length(x)), colour = "grey50", fill = "grey90") {
   stopifnot(length(y) == length(x))

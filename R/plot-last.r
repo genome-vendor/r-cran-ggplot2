@@ -8,12 +8,17 @@
 }
 .store <- .plot_store()
 
+# Set last plot
 # Set last plot created or modified
+# 
+# @arguments plot to store
+# @keyword internal
 set_last_plot <- function(value) .store$set(value)
 
 
-#' Retrieve the last plot to be modified or created.
-#' 
-#' @seealso \code{\link{ggsave}}
-#' @export
+# Retrieve last plot modified/created.
+# Whenever a plot is created or modified, it is recorded.
+# 
+# @seealso \code{\link{ggsave}}
+# @keyword hplot
 last_plot <- function() .store$get()

@@ -1,30 +1,7 @@
-coord_munch <- function(coord, data, range, segment_length = 0.01) {
-  if (is.linear(coord)) return(coord_transform(coord, data, range))
-  
-  # range has theta and r values; get corresponding x and y values
-  ranges <- coord_range(coord, range)
-
-  # Convert any infinite locations into max/min
-  # Only need to work with x and y because for munching, those are the 
-  # only position aesthetics that are transformed
-  data$x[data$x == -Inf] <- ranges$x[1]
-  data$x[data$x == Inf]  <- ranges$x[2]
-  data$y[data$y == -Inf] <- ranges$y[1]
-  data$y[data$y == Inf]  <- ranges$y[2]
-  
-  # Calculate distances using coord distance metric
-  dist <- coord_distance(coord, data$x, data$y, range)
-  dist[data$group[-1] != data$group[-nrow(data)]] <- NA
-  
-  # Munch and then transform result
-  munched <- munch_data(data, dist, segment_length)
-  coord_transform(coord, munched, range)
-}
-
 # For munching, only grobs are lines and polygons: everything else is 
 # transfomed into those special cases by the geom.  
 #
-# @param dist distance, scaled from 0 to 1 (maximum distance on plot)
+# @arguments distance, scaled from 0 to 1 (maximum distance on plot)
 # @keyword internal
 munch_data <- function(data, dist = NULL, segment_length = 0.01) {
   n <- nrow(data)
@@ -51,6 +28,8 @@ munch_data <- function(data, dist = NULL, segment_length = 0.01) {
 
 # Interpolate.
 # Interpolate n evenly spaced steps from start to end - (end - start) / n.
+# 
+# @keyword internal
 interp <- function(start, end, n) {
   if (n == 1) return(start)
   start + seq(0, 1, length = n) * (end - start)
@@ -58,6 +37,8 @@ interp <- function(start, end, n) {
 
 # Euclidean distance between points.
 # NA indicates a break / terminal points
+# 
+# @keyword internal
 dist_euclidean <- function(x, y) {
   n <- length(x)
 
@@ -66,6 +47,8 @@ dist_euclidean <- function(x, y) {
 
 # Polar dist.
 # Polar distance between points.
+# 
+# @keyword internal
 dist_polar <- function(r, theta) {
   n <- length(r)
   r1 <- r[-n]
@@ -73,6 +56,7 @@ dist_polar <- function(r, theta) {
 
   sqrt(r1 ^ 2 + r2 ^ 2 - 2 * r1 * r2 * cos(diff(theta)))
 }
+
 
 # Compute central angle between two points.
 # Multiple by radius of sphere to get great circle distance
@@ -86,6 +70,6 @@ dist_central_angle <- function(lon, lat) {
   hav <- function(x) sin(x / 2) ^ 2
   ahav <- function(x) 2 * asin(x)
   
-  n <- length(lat)
-  ahav(sqrt(hav(diff(lat)) + cos(lat[-n]) * cos(lat[-1]) * hav(diff(lon))))
+  n <- length(lon)
+  ahav(sqrt(hav(diff(lat)) + cos(lat[-n]) * cos(lat[-1]) * hav(diff(lat))))
 }

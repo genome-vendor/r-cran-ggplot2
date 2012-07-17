@@ -1,6 +1,7 @@
 # Position adjustment occurs over all groups within a geom
 # They work only with discrete x scales and may affect x and y position.
 # Should occur after statistics and scales have been applied.
+
 Position <- proto(TopLevel, expr = {
   adjust <- function(., data, scales, ...) data
 
@@ -37,6 +38,8 @@ Position <- proto(TopLevel, expr = {
 
 # Convenience function to ensure that all position variables 
 # (x, xmin, xmax, xend) are transformed in the same way
+# 
+# @keyword internal
 transform_position <- function(df, trans_x = NULL, trans_y = NULL, ...) {
   scales <- aes_to_scale(names(df))
 
